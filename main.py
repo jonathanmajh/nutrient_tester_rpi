@@ -35,8 +35,12 @@ def main():
                     time_for_next_test = last_test + \
                         timedelta(minutes=TEST_INTERVAL)
                     if datetime.now() < time_for_next_test:  # have not reached the correct time yet
-                        exit()
+                        set_wake_time(time_for_next_test)
+                        # set wake time
                     else:
+                        if datetime.now() < time_for_first_test:
+                            set_wake_time(time_for_first_test)
+                            # set wake time
                         # run test by having it go to the default
                         pass
 
@@ -65,5 +69,11 @@ def write_new_config_file():
         config.write(configfile)
     exit()
 
+
+def set_wake_time(wake_time):
+    """
+    Asks Sleepy Pi to wake me up when its all over
+    """
+    exit()
 
 main()
