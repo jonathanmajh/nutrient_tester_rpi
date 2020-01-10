@@ -6,6 +6,10 @@
 from configparser import ConfigParser
 from pathlib import Path
 from datetime import datetime, timedelta
+from threading import Thread
+from queue import Queue
+from test import test_main
+from misc import email_thread, write_new_config_file, set_wake_time
 
 
 def main():
@@ -19,61 +23,55 @@ def main():
             TESTER_ID = config['SETTINGS']['TesterID']
             EMAIL_ADDRESS = config['SETTINGS']['SendEmailTo']
             TEST_INTERVAL = config.getint('SETTINGS', 'TestInterval')
-            FIRST_TEST = config['SETTINGS']['FirstTestStartTime']
+            FIRST_TEST = datetime.strptime(
+                config['SETTINGS']['FirstTestStartTime'], DATETIME_FORMAT)
             LAST_TEST = config['INFO']['LastTest']
         except (KeyError, ValueError) as e:
             print('Invalid Config File, Please Reconfig config file: ' + str(e))
             write_new_config_file()
         else:
-            if not LAST_TEST == 'N/A': # if value is n/a then the machine has just been powered on and should run its first test
+            if not LAST_TEST == 'N/A':  # if value is n/a then the machine has just been powered on and should run its first test
                 try:
                     last_test = datetime.strptime(LAST_TEST, DATETIME_FORMAT)
                 except ValueError:
                     pass  # if the date cant be read lets run a test to overwrite the date
                     # goes back to main loop to run tests
                 else:  # check to make sure the correct amount of time has passed
-                    time_for_next_test = last_test + \
+                    time_for_this_test = last_test + \
                         timedelta(minutes=TEST_INTERVAL)
-                    if datetime.now() < time_for_next_test:  # have not reached the correct time yet
-                        set_wake_time(time_for_next_test)
+                    if datetime.now() < time_for_this_test:  # have not reached the correct time yet
+                        set_wake_time(time_for_this_test)
                         # set wake time
                     else:
-                        if datetime.now() < time_for_first_test:
-                            set_wake_time(time_for_first_test)
+                        if datetime.now() < FIRST_TEST:
+                            set_wake_time(FIRST_TEST)
                             # set wake time
                         # run test by having it go to the default
-                        pass
-
-            # default behaviour is to RUN tests
-            pass
+            else:
+                time_for_this_test = FIRST_TEST
+            # default behavior is to RUN tests
+            queue = Queue()
+            test_thread = Thread(target=test_main, args=(queue, ))
+            monitor = Thread(target=email_thread, args=(
+                queue, SENDGRID_API, TESTER_ID, EMAIL_ADDRESS))
+            print('starting queue')
+            test_thread.start()
+            monitor.start()
+            print('waiting for queue to finish')
+            test_thread.join()
+            monitor.join()
+            print('queue finished')
             # update config file with new run time
             config['INFO']['LastTest'] = datetime.now().strftime(
                 DATETIME_FORMAT)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
-            
+            time_for_next_test = time_for_this_test + \
+                timedelta(minutes=TEST_INTERVAL)
+            set_wake_time(time_for_next_test)
     else:
         print("No config file found... Creating new config file")
         write_new_config_file()
 
-
-def write_new_config_file():
-    config = ConfigParser()
-    config['KEYS'] = {'SendGrid': 'PASTE_SENDGRID_API_KEY_HERE'}
-    config['SETTINGS'] = {'TesterID': 'ENTER_ID_FOR_THIS_DEVICE_HERE',
-                          'SendEmailTo': 'ENTER_EMAIL_ADDRESS_RESULTS_SHOULD_BE_SENT_TO',
-                          'TestInterval': 'ENTER_TIME_BETWEEN_TESTS_IN_MINUTES',
-                          'FirstTestStartTime': 'ENTER_TIME_OF_FIRST_TEST(2020-01-31:15:40)'}
-    config['INFO'] = {'LastTest': 'N/A'}
-    with open('config.ini', 'w') as configfile:
-        config.write(configfile)
-    exit()
-
-
-def set_wake_time(wake_time):
-    """
-    Asks Sleepy Pi to wake me up when its all over
-    """
-    exit()
 
 main()
