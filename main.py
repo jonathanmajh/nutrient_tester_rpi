@@ -37,6 +37,7 @@ def main():
                     pass  # if the date cant be read lets run a test to overwrite the date
                     # goes back to main loop to run tests
                 else:  # check to make sure the correct amount of time has passed
+                    print('loaded last test time')
                     time_for_this_test = last_test + \
                         timedelta(minutes=TEST_INTERVAL)
                     if datetime.now() < time_for_this_test:  # have not reached the correct time yet
