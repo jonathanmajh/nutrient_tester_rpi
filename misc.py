@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from queue import Queue
 from configparser import ConfigParser
 import traceback
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 @dataclass
 class QueueMessage:
@@ -35,9 +37,22 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
             status = status + 'Test from unit: ' + TESTER + ' has completed successfully, see results attached'
             running = False
         queue.task_done()
-    
+    message = Mail(
+        from_email=TESTER+'@example.com',
+        to_emails=EMAIL,
+        subject='Test Results for Tester: '+ TESTER + ' at time: x',
+        html_content='<p>' + status + '<p>')
+    try:
+        sg = SendGridAPIClient(API)
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(str(type(e)) + ' ' + str(e))
     # code for sending email
     print(status)
+
 
 def write_new_config_file():
     """

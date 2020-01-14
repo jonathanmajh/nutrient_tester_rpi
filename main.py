@@ -42,7 +42,8 @@ def main():
                         timedelta(minutes=TEST_INTERVAL)
                     if datetime.now() < time_for_this_test:  # have not reached the correct time yet
                         set_wake_time(time_for_this_test)
-                        # set wake time
+                        # set wake 
+                        # consider making wake time a bit early, so waking a bit early would not cause a shutdown
                     else:
                         if datetime.now() < FIRST_TEST:
                             set_wake_time(FIRST_TEST)
