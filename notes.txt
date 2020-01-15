@@ -1,0 +1,19 @@
+# some backend for matplotlib
+apt-get install python-tk
+
+# masking of red color
+https://www.learnopencv.com/invisibility-cloak-using-color-detection-and-segmentation-with-opencv/
+
+# if we want the average (mean) of a masked region
+https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#mean
+
+# creating a histogram
+https://docs.opencv.org/master/dd/d0d/tutorial_py_2d_histogram.html
+## plotting
+https://stackoverflow.com/questions/48126335/drawing-a-histogram-in-opencv-python
+
+# some general (unhelpful) information
+https://stackoverflow.com/questions/15913895/detecting-shades-of-color-in-opencv
+
+# color picker & converter
+https://stackoverflow.com/questions/51871134/hsv-opencv-colour-range
