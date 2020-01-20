@@ -17,3 +17,9 @@ https://stackoverflow.com/questions/15913895/detecting-shades-of-color-in-opencv
 
 # color picker & converter
 https://stackoverflow.com/questions/51871134/hsv-opencv-colour-range
+
+# finds polygons and gives its coordinates
+https://docs.opencv.org/4.2.0/d4/d73/tutorial_py_contours_begin.html
+
+# get outline and middle of circle, then mask the circle average
+https://stackoverflow.com/questions/34290781/how-to-mask-circular-area
