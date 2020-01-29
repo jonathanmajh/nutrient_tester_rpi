@@ -9,6 +9,7 @@ https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#mean
 
 # creating a histogram
 https://docs.opencv.org/master/dd/d0d/tutorial_py_2d_histogram.html
+
 ## plotting
 https://stackoverflow.com/questions/48126335/drawing-a-histogram-in-opencv-python
 
@@ -23,3 +24,9 @@ https://docs.opencv.org/4.2.0/d4/d73/tutorial_py_contours_begin.html
 
 # get outline and middle of circle, then mask the circle average
 https://stackoverflow.com/questions/34290781/how-to-mask-circular-area
+
+# steppers
+https://www.pololu.com/docs/0J71/4.6
+I2C is better than serial (serial requires AND gate when connecting multiple TICs)
+https://www.pololu.com/docs/0J71/12.9
+0-5000 for position, due to lack of encoder the position should be set manually
