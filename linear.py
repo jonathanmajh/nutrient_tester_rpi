@@ -47,12 +47,13 @@ class TicI2C(object):
   def get_current_position(self):
     b = self.get_variables(0x22, 4)
     position = b[0] + (b[1] << 8) + (b[2] << 16) + (b[3] << 24)
+    print(position)
     if position >= (1 << 31):
       position -= (1 << 32)
     return position
  
-# Open a handle to "/dev/i2c-3", representing the I2C bus.
-bus = SMBus(3)
+# Open a handle to "/dev/i2c-1", representing the I2C bus.
+bus = SMBus(1)
  
 # Select the I2C address of the Tic (the device number).
 address = 14
@@ -62,7 +63,8 @@ tic = TicI2C(bus, address)
 position = tic.get_current_position()
 print("Current position is {}.".format(position))
  
-new_target = -200 if position > 0 else 200
+new_target = 0
 print("Setting target position to {}.".format(new_target));
 tic.exit_safe_start()
 tic.set_target_position(new_target)
+print("finished setting new position")
