@@ -10,6 +10,7 @@
 #   the device number of your Tic.
  
 from smbus2 import SMBus, i2c_msg
+import time
  
 class TicI2C(object):
   def __init__(self, bus, address):
@@ -22,6 +23,24 @@ class TicI2C(object):
     write = i2c_msg.write(self.address, command)
     self.bus.i2c_rdwr(write)
  
+  # sends the "Enter safe start" command
+  def enter_safe_start(self):
+    command = [0x8F]
+    write = i2c_msg.write(self.address, command)
+    self.bus.i2c_rdwr(write)
+
+  # sends the "Energize" command
+  def energize(self):
+    command = [0x85]
+    write = i2c_msg.write(self.address, command)
+    self.bus.i2c_rdwr(write)
+
+  # sends the "De engerize" command
+  def de_energize(self):
+    command = [0x86]
+    write = i2c_msg.write(self.address, command)
+    self.bus.i2c_rdwr(write)
+
   # Sets the target position.
   #
   # For more information about what this command does, see the
@@ -52,19 +71,30 @@ class TicI2C(object):
       position -= (1 << 32)
     return position
  
-# Open a handle to "/dev/i2c-1", representing the I2C bus.
+# Open a handle to "/dev/i2c-3", representing the I2C bus.
 bus = SMBus(1)
  
 # Select the I2C address of the Tic (the device number).
-address = 14
+
  
-tic = TicI2C(bus, address)
+tic1 = TicI2C(bus, 14)
+tic2 = TicI2C(bus, 15)
  
-position = tic.get_current_position()
-print("Current position is {}.".format(position))
+position = tic1.get_current_position()
+print("Tic1 Current position is {}.".format(position))
+position = tic2.get_current_position()
+print("Tic2 Current position is {}.".format(position))
  
-new_target = 0
+new_target = -1000
 print("Setting target position to {}.".format(new_target));
-tic.exit_safe_start()
-tic.set_target_position(new_target)
+tic1.exit_safe_start()
+tic1.set_target_position(new_target)
+tic2.exit_safe_start()
+tic2.set_target_position(new_target)
+tic1.energize()
+tic2.energize()
 print("finished setting new position")
+print("sleeping 10 seconds")
+time.sleep(10)
+tic1.de_energize()
+tic2.de_energize()
