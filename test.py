@@ -1,11 +1,14 @@
 import sys
 import time
 from queue import Queue
+from math import sqrt
 
 import cv2
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
+from motor_control import move_linear_water, move_valve
+import maestro
 
 from misc import QueueMessage
 matplotlib.use('TkAgg')
@@ -47,3 +50,38 @@ def detect_color(queue: Queue):
     cv2.waitKey(0)
     plt.imshow(hist)
     plt.show()
+
+def pretest_clean(queue: Queue):
+    """
+    Flush the pipe with air before test begins
+    Assume water actuator starts in extended position
+    And Valve is 1
+    """
+    # suck in air
+    move_linear_water([0])
+    move_valve(2)
+    # push out air, pull in water
+    move_linear_water([5000, 1000])
+    move_valve(1)
+
+
+def move_paper(queue: Queue, completed: int):
+    """
+    Moves new paper into position
+    Need to somehow track roll usage
+    """
+    speed = 2 # rad / second
+    length = 20 # mm
+    total_length = 20 * completed
+    inner_radius = 123 #TODO
+    thickness = 0.05 # used paper thickness.... TODO
+    radius = sqrt(total_length * thickness / 3.14159 + inner_radius * inner_radius)
+    # https://math.stackexchange.com/questions/2145821/calculating-the-length-of-tape-when-it-is-wound-up
+    theta = length / radius
+    run_time = theta / speed
+    servo = maestro.Controller()
+    servo.setAccel(0, 4)
+    servo.setSpeed(0, 10)
+    servo.setTarget(0, 6000) # turn continuous servo
+    time.sleep(run_time)
+    servo.setTarget(0, 1500) # stop servo

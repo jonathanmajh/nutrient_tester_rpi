@@ -64,19 +64,15 @@ def write_new_config_file():
     config['KEYS'] = {'SendGrid': 'PASTE_SENDGRID_API_KEY_HERE'}
     config['SETTINGS'] = {'TesterID': 'ENTER_ID_FOR_THIS_DEVICE_HERE',
                           'SendEmailTo': 'ENTER_EMAIL_ADDRESS_RESULTS_SHOULD_BE_SENT_TO',
-                          'TestInterval': 'ENTER_TIME_BETWEEN_TESTS_IN_MINUTES',
                           'FirstTestStartTime': 'ENTER_TIME_OF_FIRST_TEST(2020-01-31:15:40)'}
-    config['INFO'] = {'LastTest': 'N/A'}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
     exit()
 
 
-def set_wake_time(wake_time):
-    """
-    Asks Sleepy Pi to wake me up when its all over
-
-    Exits program when finished
-    """
-    print('setting next wake time')
-    exit()
+#def set_wake_time(wake_time):
+#    """
+#    set cron schedule? probably easier to do manually since sudo is required
+#    """
+#    print('setting next wake time')
+#    exit()
