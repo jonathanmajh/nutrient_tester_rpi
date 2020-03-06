@@ -3,7 +3,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import subprocess
 
-API = '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'
+API = 'fml'
 EMAIL = 'jonathanmajh@gmail.com'
 TIME = datetime.now()
 
