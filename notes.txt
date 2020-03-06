@@ -30,3 +30,7 @@ https://www.pololu.com/docs/0J71/4.6
 I2C is better than serial (serial requires AND gate when connecting multiple TICs)
 https://www.pololu.com/docs/0J71/12.9
 0-5000 for position, due to lack of encoder the position should be set manually
+
+quick notes
+https://stackoverflow.com/questions/36911877/cropping-circle-from-image-using-opencv-python
+https://github.com/frc4564/maestro
