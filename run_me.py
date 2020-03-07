@@ -1,16 +1,16 @@
-from rotation_servos import *
+# from rotation_servos import *
 
-servo = MaestroUART()
+# servo = MaestroUART()
 
-print(servo.get_error())
+# print(servo.get_error())
 
-servo.set_acceleration(0, 5)
-servo.set_speed(0, 32)
-print('position ' + servo.get_position(0))
+# servo.set_acceleration(0, 5)
+# servo.set_speed(0, 32)
+# print('position ' + servo.get_position(0))
 
-servo.set_target(0, 8000)
+# servo.set_target(0, 8000)
 
-servo.close()
+# servo.close()
 
 from linear import TicI2C
 from smbus2 import SMBus
@@ -25,8 +25,8 @@ print("Tic1 Current position is {}.".format(position))
 position = tic2.get_current_position()
 print("Tic2 Current position is {}.".format(position))
 
-new_target = 0
 new_target = -1000
+new_target = input('please enter new position (0, -5000)')
 print("Setting target position to {}.".format(new_target));
 tic1.exit_safe_start()
 tic1.set_target_position(new_target)
