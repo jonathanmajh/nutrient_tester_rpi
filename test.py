@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
-from motor_control import move_linear_water, move_valve
+from motor_control import move_water_linear, move_water_valve, move_reactant_linear
 import maestro
 
 from misc import QueueMessage
@@ -55,14 +55,14 @@ def pretest_clean(queue: Queue):
     """
     Flush the pipe with air before test begins
     Assume water actuator starts in extended position
-    And Valve is 1
     """
     # suck in air
-    move_linear_water([0])
-    move_valve(2)
+    move_water_valve(1)
+    move_water_linear([0])
+    move_water_valve(2)
     # push out air, pull in water
-    move_linear_water([5000, 1000])
-    move_valve(1)
+    move_water_linear([5000, 1000])
+
 
 
 def move_paper(queue: Queue, completed: int):
@@ -85,3 +85,23 @@ def move_paper(queue: Queue, completed: int):
     servo.setTarget(0, 6000) # turn continuous servo
     time.sleep(run_time)
     servo.setTarget(0, 1500) # stop servo
+
+def just_add_water(queue: Queue, completed: int):
+    """
+    put water sample and reactant onto paper
+    """
+    move_water_valve(1)
+    # push out some water then sucking back in
+    move_water_linear([2000, 0])
+    move_reactant_linear(completed)
+
+def run_heater(queue: Queue):
+    """
+    """
+    # TODO set pin to high
+    time.sleep(300) # 5 minutes
+
+def take_photo(queue: Queue):
+    """
+    """
+    #TODO
