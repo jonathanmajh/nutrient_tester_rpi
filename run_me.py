@@ -26,7 +26,7 @@ position = tic2.get_current_position()
 print("Tic2 Current position is {}.".format(position))
 
 new_target = -1000
-new_target = input('please enter new position (0, -5000)')
+new_target = int(input('please enter new position (0, -5000): '))
 print("Setting target position to {}.".format(new_target));
 tic1.exit_safe_start()
 tic1.set_target_position(new_target)
