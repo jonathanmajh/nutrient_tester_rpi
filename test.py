@@ -1,7 +1,9 @@
 import sys
 import time
+from datetime import datetime
 from queue import Queue
 from math import sqrt
+from picamera import PiCamera
 
 import cv2
 import numpy as np
@@ -51,7 +53,7 @@ def detect_color(queue: Queue):
     plt.imshow(hist)
     plt.show()
 
-def pretest_clean(queue: Queue):
+def pre_test_clean(queue: Queue):
     """
     Flush the pipe with air before test begins
     Assume water actuator starts in extended position
@@ -93,6 +95,8 @@ def just_add_water(queue: Queue, completed: int):
     move_water_valve(1)
     # push out some water then sucking back in
     move_water_linear([2000, 0])
+    # move valve to inlet so no liquid can go on paper
+    move_water_valve(2)
     move_reactant_linear(completed)
 
 def run_heater(queue: Queue):
@@ -101,7 +105,23 @@ def run_heater(queue: Queue):
     # TODO set pin to high
     time.sleep(300) # 5 minutes
 
-def take_photo(queue: Queue):
+def take_photo(queue: Queue, test_time: datetime, FORMAT: str):
     """
     """
-    #TODO
+    camera = PiCamera()
+    camera.capture('/home/pi/nutrient_tester_pi/' + test_time.strftime(FORMAT) + '.jpg')
+    #TODO turn on leds
+
+def post_test_clean(queue: Queue):
+    """
+    Empty tubes so that there is only air
+    """
+    # make doubly sure
+    move_water_valve(2)
+    # push water out
+    move_water_linear([5000])
+    # take in more air
+    move_water_valve(1)
+    move_water_linear(0)
+    move_water_valve(2)
+    move_water_linear([5000])

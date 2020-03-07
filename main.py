@@ -15,6 +15,7 @@ from misc import email_thread, write_new_config_file
 def main():
     DATETIME_FORMAT = '%Y-%m-%d:%H:%M'
     config = ConfigParser()
+    test_time = datetime.now()
     if Path('config.ini').is_file():
         print("Found config file")
         config.read('config.ini')
@@ -28,7 +29,7 @@ def main():
             print('Invalid Config File, Please Reconfig config file: ' + str(e))
             write_new_config_file()
         else:
-            if datetime.now() < FIRST_TEST:
+            if test_time < FIRST_TEST:
                 quit()
             # default behavior is to RUN tests
             queue = Queue()
