@@ -67,6 +67,7 @@ def write_new_config_file():
     config['SETTINGS'] = {'TesterID': 'ENTER_ID_FOR_THIS_DEVICE_HERE',
                           'SendEmailTo': 'ENTER_EMAIL_ADDRESS_RESULTS_SHOULD_BE_SENT_TO',
                           'FirstTestStartTime': 'ENTER_TIME_OF_FIRST_TEST(2020-01-31:15:40)'}
+    config['INFO'] = {'Completed': '0'}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
     exit()

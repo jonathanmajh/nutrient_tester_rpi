@@ -25,6 +25,7 @@ def main():
             EMAIL_ADDRESS = config['SETTINGS']['SendEmailTo']
             FIRST_TEST = datetime.strptime(
                 config['SETTINGS']['FirstTestStartTime'], DATETIME_FORMAT)
+            Completed = config['INFO']['Completed']
         except (KeyError, ValueError) as e:
             print('Invalid Config File, Please Reconfig config file: ' + str(e))
             write_new_config_file()
@@ -33,7 +34,7 @@ def main():
                 quit()
             # default behavior is to RUN tests
             queue = Queue()
-            test_thread = Thread(target=test_main, args=(queue, ))
+            test_thread = Thread(target=test_main, args=(queue, Completed, test_time, DATETIME_FORMAT))
             monitor = Thread(target=email_thread, args=(
                 queue, SENDGRID_API, TESTER_ID, EMAIL_ADDRESS))
             print('starting queue')
@@ -44,6 +45,7 @@ def main():
             monitor.join()
             print('queue finished')
             # update config file with new run time
+            Completed = Completed + 1
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
     else:

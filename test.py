@@ -18,7 +18,8 @@ matplotlib.use('TkAgg')
 
 def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
     try:
-        queue.put(QueueMessage('Starting Tests', task_name='Test Main'))
+        queue.put(QueueMessage('Starting', task_name='Test Main'))
+        timer = time.time()
         pre_test_clean(queue)
         just_add_water(queue, completed)
         # tube cleaning can run async at while we are waiting for heater
@@ -30,6 +31,7 @@ def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
         detect_color(queue)
         # it doesnt really matter when cleaning finishes as long as it does by the end
         clean.join()
+        queue.put(QueueMessage('Finished in: ' + str(time.time() - timer), task_name='Test Main'))
     except:
         queue.put(QueueMessage('Unexpected Exception', 4, sys.exc_info()))
 
@@ -66,11 +68,15 @@ def pre_test_clean(queue: Queue):
     Assume water actuator starts in extended position
     """
     # suck in air
+    queue.put(QueueMessage('Starting', task_name='Pre-Test Cleaning'))
+    queue.put(QueueMessage('Sucking in Air', task_name='Pre-Test Cleaning'))
     move_water_valve(1)
     move_water_linear([0])
+    queue.put(QueueMessage('Pushing out air, then pulling in water', task_name='Pre-Test Cleaning'))
     move_water_valve(2)
     # push out air, pull in water
     move_water_linear([5000, 1000])
+    queue.put(QueueMessage('Finished', task_name='Pre-Test Cleaning'))
 
 
 
@@ -79,6 +85,7 @@ def move_paper(queue: Queue, completed: int):
     Moves new paper into position
     Need to somehow track roll usage
     """
+    queue.put(QueueMessage('Starting', task_name='Move Paper'))
     speed = 2 # rad / second
     length = 20 # mm
     total_length = 20 * completed
@@ -88,47 +95,67 @@ def move_paper(queue: Queue, completed: int):
     # https://math.stackexchange.com/questions/2145821/calculating-the-length-of-tape-when-it-is-wound-up
     theta = length / radius
     run_time = theta / speed
+    queue.put(QueueMessage('Turning Servo by {rad} rad, time required {time} s'.format(rad=theta, time=run_time), task_name='Move Paper'))
     servo = maestro.Controller()
     servo.setAccel(0, 4)
     servo.setSpeed(0, 10)
     servo.setTarget(0, 6000) # turn continuous servo
     time.sleep(run_time)
     servo.setTarget(0, 1500) # stop servo
+    queue.put(QueueMessage('Finished', task_name='Move Paper'))
 
 def just_add_water(queue: Queue, completed: int):
     """
     put water sample and reactant onto paper
     """
+    queue.put(QueueMessage('Starting', task_name='Sampling'))
+    queue.put(QueueMessage('Adding Water', task_name='Sampling'))
     move_water_valve(1)
     # push out some water then sucking back in
     move_water_linear([2000, 0])
     # move valve to inlet so no liquid can go on paper
+    queue.put(QueueMessage('Adding Reactant', task_name='Sampling'))
     move_water_valve(2)
     move_reactant_linear(completed)
+    queue.put(QueueMessage('Finished', task_name='Sampling'))
 
 def run_heater(queue: Queue):
     """
     """
+    queue.put(QueueMessage('Starting', task_name='Heater'))
+    queue.put(QueueMessage('Turning on heater for {time} seconds'.format(time=300), task_name='Heater'))
     # TODO set pin to high
     time.sleep(300) # 5 minutes
+    queue.put(QueueMessage('Finished', task_name='Heater'))
 
 def take_photo(queue: Queue, test_time: datetime, FORMAT: str):
     """
     """
+    queue.put(QueueMessage('Starting', task_name='Camera'))
+    queue.put(QueueMessage('Turning on LEDs', task_name='Camera'))
+    # TODO
     camera = PiCamera()
-    camera.capture('/home/pi/nutrient_tester_pi/' + test_time.strftime(FORMAT) + '.jpg')
-    #TODO turn on leds
+    queue.put(QueueMessage('Taking photo', task_name='Camera'))
+    filename = '/home/pi/nutrient_tester_pi/{}.jpg'.format(test_time.strftime(FORMAT))
+    camera.capture(filename)
+    queue.put(QueueMessage('Photo saved as "{}"'.format(filename), task_name='Camera'))
+    queue.put(QueueMessage('Finished', task_name='Camera'))
 
 def post_test_clean(queue: Queue):
     """
     Empty tubes so that there is only air
     """
     # make doubly sure
+    queue.put(QueueMessage('Starting', task_name='Post-test Clean'))
+    queue.put(QueueMessage('Push out water', task_name='Post-test Clean'))
     move_water_valve(2)
     # push water out
     move_water_linear([5000])
     # take in more air
+    queue.put(QueueMessage('Pulling in air', task_name='Post-test Clean'))
     move_water_valve(1)
     move_water_linear(0)
+    queue.put(QueueMessage('Push out air', task_name='Post-test Clean'))
     move_water_valve(2)
     move_water_linear([5000])
+    queue.put(QueueMessage('Finished', task_name='Post-test Clean'))
