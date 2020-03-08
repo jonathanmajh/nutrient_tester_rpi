@@ -27,8 +27,8 @@ def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
         clean.start()
         run_heater(queue)
         move_paper(queue, completed)
-        take_photo(queue, test_time, FORMAT)
-        detect_color(queue)
+        filename = take_photo(queue, test_time, FORMAT)
+        detect_color(queue, filename)
         # it doesnt really matter when cleaning finishes as long as it does by the end
         clean.join()
         queue.put(QueueMessage('Finished in: ' + str(time.time() - timer), task_name='Test Main'))
@@ -36,11 +36,9 @@ def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
         queue.put(QueueMessage('Unexpected Exception', 4, sys.exc_info()))
 
 
-def detect_color(queue: Queue):
-    # take a photo
-    photo_path = '/home/jon/nutrient_tester_rpi/samples/real.png'
+def detect_color(queue: Queue, filename: str):
     # load photo
-    image = cv2.imread(photo_path)
+    image = cv2.imread(filename)
     image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # Range for lower red
     lower_red = np.array([0, 120, 70])
@@ -140,6 +138,7 @@ def take_photo(queue: Queue, test_time: datetime, FORMAT: str):
     camera.capture(filename)
     queue.put(QueueMessage('Photo saved as "{}"'.format(filename), task_name='Camera'))
     queue.put(QueueMessage('Finished', task_name='Camera'))
+    return filename
 
 def post_test_clean(queue: Queue):
     """
