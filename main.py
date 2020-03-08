@@ -13,7 +13,7 @@ from misc import email_thread, write_new_config_file
 
 
 def main():
-    DATETIME_FORMAT = '%Y-%m-%d:%H:%M'
+    DATETIME_FORMAT = '%Y-%m-%d-%H-%M'
     config = ConfigParser()
     test_time = datetime.now()
     if Path('config.ini').is_file():
@@ -25,7 +25,7 @@ def main():
             EMAIL_ADDRESS = config['SETTINGS']['SendEmailTo']
             FIRST_TEST = datetime.strptime(
                 config['SETTINGS']['FirstTestStartTime'], DATETIME_FORMAT)
-            Completed = config['INFO']['Completed']
+            Completed = int(config['INFO']['Completed'])
         except (KeyError, ValueError) as e:
             print('Invalid Config File, Please Reconfig config file: ' + str(e))
             write_new_config_file()

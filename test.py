@@ -134,9 +134,10 @@ def take_photo(queue: Queue, test_time: datetime, FORMAT: str):
     # TODO
     camera = PiCamera()
     queue.put(QueueMessage('Taking photo', task_name='Camera'))
-    filename = '/home/pi/nutrient_tester_pi/{}.jpg'.format(test_time.strftime(FORMAT))
+    filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time.strftime(FORMAT))
     camera.capture(filename)
     queue.put(QueueMessage('Photo saved as "{}"'.format(filename), task_name='Camera'))
+    camera.close()
     queue.put(QueueMessage('Finished', task_name='Camera'))
     return filename
 
