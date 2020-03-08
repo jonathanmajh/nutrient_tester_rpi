@@ -20,17 +20,17 @@ def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
     try:
         queue.put(QueueMessage('Starting', task_name='Test Main'))
         timer = time.time()
-        pre_test_clean(queue)
-        just_add_water(queue, completed)
+        # pre_test_clean(queue)
+        # just_add_water(queue, completed)
         # tube cleaning can run async at while we are waiting for heater
-        clean = Thread(target=post_test_clean, args=(queue, ))
-        clean.start()
-        run_heater(queue)
-        move_paper(queue, completed)
+        # clean = Thread(target=post_test_clean, args=(queue, ))
+        # clean.start()
+        # run_heater(queue)
+        # move_paper(queue, completed)
         filename = take_photo(queue, test_time, FORMAT)
         detect_color(queue, filename)
         # it doesnt really matter when cleaning finishes as long as it does by the end
-        clean.join()
+        # clean.join()
         queue.put(QueueMessage('Finished in: ' + str(time.time() - timer), task_name='Test Main'))
     except:
         queue.put(QueueMessage('Unexpected Exception', 4, sys.exc_info()))
