@@ -4,6 +4,7 @@ from datetime import datetime
 from queue import Queue
 from math import sqrt
 from picamera import PiCamera
+from threading import Thread
 
 import cv2
 import numpy as np
@@ -15,14 +16,20 @@ import maestro
 from misc import QueueMessage
 matplotlib.use('TkAgg')
 
-def test_main(queue: Queue):
+def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
     try:
-        queue.put(QueueMessage('Starting Tests'))
+        queue.put(QueueMessage('Starting Tests', task_name='Test Main'))
+        pre_test_clean(queue)
+        just_add_water(queue, completed)
+        # tube cleaning can run async at while we are waiting for heater
+        clean = Thread(target=post_test_clean, args=(queue, ))
+        clean.start()
+        run_heater(queue)
+        move_paper(queue, completed)
+        take_photo(queue, test_time, FORMAT)
         detect_color(queue)
-        queue.put(QueueMessage('Sleeping 5 seconds'))
-        time.sleep(1)
-        queue.put(QueueMessage('Raising Exception'))
-        queue.put(QueueMessage('', 0))
+        # it doesnt really matter when cleaning finishes as long as it does by the end
+        clean.join()
     except:
         queue.put(QueueMessage('Unexpected Exception', 4, sys.exc_info()))
 

@@ -17,6 +17,7 @@ class QueueMessage:
     message: str
     message_type: int = 1
     exception: tuple = None
+    task_name: str = ''
 
 
 def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
@@ -25,17 +26,18 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
     while running:
         data = queue.get()
         if data.message_type == 1:
-            status = status + data.message + '\n'
+            status = status + data.task_name + ': ' + data.message + '\n'
         elif data.message_type == 2:
-            status = status + 'Warning: ' + data.message + '\n'
+            status = status + 'Warning: ' + data.task_name + ': ' + data.message + '\n'
         elif data.message_type == 3:
-            status = status + 'Error: ' + data.message + '\n'
+            status = status + 'Error: ' + data.task_name + ': ' + data.message + '\n'
         elif data.message_type == 4:
-            status = status + 'Error: Test Failed:\n' + str(data.exception[0]) + '\n' + str(data.exception[1]) + '\n' + traceback.format_tb(data.exception[2])[0]
+            status = status + 'Error: Test Failed: ' + data.task_name + '\n' + str(data.exception[0]) + '\n' + str(data.exception[1]) + '\n' + traceback.format_tb(data.exception[2])[0]
             running = False
         elif data.message_type == 0:
             status = status + 'Test from unit: ' + TESTER + ' has completed successfully, see results attached'
             running = False
+        print(data.task_name + ': ' + data.message)
         queue.task_done()
     message = Mail(
         from_email=TESTER+'@example.com',
