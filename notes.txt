@@ -36,3 +36,6 @@ https://stackoverflow.com/questions/36911877/cropping-circle-from-image-using-op
 https://github.com/frc4564/maestro
 
 192.168.137.1
+
+# use this to figure out hsv colors
+http://aleto.ch/color-mixer/

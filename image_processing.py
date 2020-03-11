@@ -1,7 +1,9 @@
+import matplotlib
 import numpy as np
 import cv2 as cv
 from math import hypot
-
+from matplotlib import pyplot as plt
+matplotlib.use('TkAgg')
 def detect_lines():
     # load photo
     image = cv.imread('samples/white.jpg')
@@ -42,6 +44,7 @@ def detect_all_circle():
 def detect_circle():
     # also masked area outside circle
     img = cv.imread('samples/123.jpg')
+    hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     img = cv.medianBlur(img,5)
     cimg = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
     circles = cv.HoughCircles(cimg,cv.HOUGH_GRADIENT,1,20,
@@ -53,7 +56,8 @@ def detect_circle():
     i = circles[0][0]
     x, y, r = circles[0][0]
     # draw the outer circle
-    cv.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
+    radius_offset = 60
+    cv.circle(cimg,(i[0],i[1]),i[2]-radius_offset,(0,255,0),2)
     # draw the center of the circle
     cv.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
     # cv.namedWindow('circles',cv.WINDOW_NORMAL)
@@ -63,17 +67,32 @@ def detect_circle():
     
     # create a mask of just the circle in white
     mask = np.zeros(img.shape[:2], dtype="uint8")
-    cv.circle(mask, (i[0],i[1]), i[2], 255, -1)
+    cv.circle(mask, (i[0],i[1]), i[2]-radius_offset, 255, -1)
     # cv.imshow('mask',mask)
     # cv.waitKey(0)
 
 
     masked = cv.bitwise_and(img, img, mask=mask)
+    # cv.namedWindow('masked',cv.WINDOW_NORMAL)
+    # cv.resizeWindow('masked', 800, 800)
+    # cv.imshow('masked',masked)
+    # cv.waitKey(0)
+
+    # dont really need an extra mask...
+    hsv_mask = cv.bitwise_and(hsv, hsv, mask=mask)
     cv.namedWindow('masked',cv.WINDOW_NORMAL)
     cv.resizeWindow('masked', 800, 800)
-    cv.imshow('masked',masked)
+    cv.imshow('masked',hsv_mask)
     cv.waitKey(0)
 
+    for i, col in enumerate(['r', 'g', 'b']):
+        hist = cv.calcHist([hsv], [i], mask, [256], [0, 256])
+        plt.plot(hist, color = col)
+        plt.xlim([0, 256])
+
+    plt.show()
+
+    hist = cv.calcHist([hsv], [2], mask)
     # there must be a faster way
     # rows, cols, temp = img.shape
     # for i in range(cols):
