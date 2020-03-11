@@ -39,3 +39,6 @@ https://github.com/frc4564/maestro
 
 # use this to figure out hsv colors
 http://aleto.ch/color-mixer/
+# in hsv color mostly depends on hue (h)
+red - 0-10 + 170-180
+blue - 110-130

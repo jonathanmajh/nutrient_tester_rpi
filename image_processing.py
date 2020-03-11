@@ -2,8 +2,12 @@ import matplotlib
 import numpy as np
 import cv2 as cv
 from math import hypot
+from queue import Queue
 from matplotlib import pyplot as plt
+import json
 matplotlib.use('TkAgg')
+
+
 def detect_lines():
     # load photo
     image = cv.imread('samples/white.jpg')
@@ -41,7 +45,7 @@ def detect_all_circle():
     cv.waitKey(0)
     cv.destroyAllWindows()
 
-def detect_circle():
+def detect_one_circle():
     # also masked area outside circle
     img = cv.imread('samples/123.jpg')
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
@@ -107,4 +111,63 @@ def detect_circle():
     # cv.waitKey(0)
     cv.destroyAllWindows()
 
-detect_circle()
+def old_detect_color(queue: Queue, filename: str):
+    # load photo
+    image = cv2.imread(filename)
+    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    # Range for lower red
+    lower_red = np.array([0, 120, 70])
+    upper_red = np.array([10, 255, 255])
+    mask = cv2.inRange(image_hsv, lower_red, upper_red)
+    # TODO color mask vs shape mask
+    # Range for upper range
+    lower_red = np.array([170, 120, 70])
+    upper_red = np.array([180, 255, 255])
+    mask = mask + cv2.inRange(image_hsv, lower_red, upper_red)
+    queue.put(QueueMessage('Displaying Masked Image'))
+    cv2.imshow('masks', mask)
+    # waitKey is necessary for the image to appear in the windows -_-
+    cv2.waitKey(0)
+    hist = cv2.calcHist([image_hsv], [0, 1], None, [
+                        180, 256], [0, 180, 0, 256])
+    cv2.imshow('hist', hist)
+    cv2.waitKey(0)
+    plt.imshow(hist)
+    plt.show()
+
+def detect_circle(queue: Queue, filename: str):
+    queue.put(QueueMessage('Starting', task_name='Detect Circle'))
+    img = cv.imread(filename)
+    img = cv.medianBlur(img,5)
+    # 256 shades of gray
+    gray_img = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+    # detect circles
+    circles = cv.HoughCircles(cimg,cv.HOUGH_GRADIENT,1,20,
+                                param1=50,param2=30,minRadius=0,maxRadius=0)
+    circles = np.uint16(np.around(circles))
+    return circles[0][0] # return first circle detected
+
+def detect_color(queue: Queue, filename: str, location: List[int]):
+    radius_offset = 60
+    img = cv.imread(filename)
+    hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    x, y, z = location
+    mask = np.zeros(img.shape[:2], dtype="uint8")
+    cv.circle(mask, (i[0],i[1]), i[2]-radius_offset, 255, -1)
+    result = {}
+    plot_color = ['r', 'g', 'b']
+    hsv_var = ['h', 's', 'v']
+    for i, col in enumerate(plot_color):
+        hist = cv.calcHist([hsv], [i], mask, [256], [0, 256])
+        result[hsv_var[i]:hist]
+        plt.plot(hist, color = col)
+        plt.xlim([0, 256])
+
+    hist_file = '{}_hist.png'.format(filename[:-3])
+    plt.savefig(hist_file, bbox_inches='tight')
+
+    json_file = '{}_hist.json'.format(filename[:-3])
+    with open(json_file, 'w') as jf:
+        json.dump(result, jf, indent=4)
+
+    return (hist_file, json_file, result)
