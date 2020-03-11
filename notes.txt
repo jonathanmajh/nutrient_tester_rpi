@@ -42,3 +42,4 @@ http://aleto.ch/color-mixer/
 # in hsv color mostly depends on hue (h)
 red - 0-10 + 170-180
 blue - 110-130
+https://i.stack.imgur.com/gyuw4.png

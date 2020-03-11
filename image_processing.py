@@ -66,6 +66,7 @@ def detect_one_circle():
     # since it always detects the outer circle it might be good to reduce the radius so that only the inner circle is shown TODO
     i = circles[0][0]
     x, y, r = circles[0][0]
+    print(circles[0][0])
     # draw the outer circle
     radius_offset = 60
     cv.circle(cimg, (i[0], i[1]), i[2]-radius_offset, (0, 255, 0), 2)
@@ -102,7 +103,11 @@ def detect_one_circle():
 
     plt.show()
 
-    hist = cv.calcHist([hsv], [2], mask)
+    hist_2d = cv.calcHist([hsv], [0, 1], None, [180, 256], [0, 180, 0, 256])
+    plt.imshow(hist_2d,interpolation='nearest')
+    plt.show()
+    # Perhaps write the array to csv for easier reading
+    # https://stackoverflow.com/questions/44691524/write-a-2d-array-to-a-csv-file-with-delimiter
     # there must be a faster way
     # rows, cols, temp = img.shape
     # for i in range(cols):
@@ -158,3 +163,9 @@ def detect_color(queue: Queue, filename: str, location: List[int]):
         json.dump(result, jf, indent=4)
     queue.put(QueueMessage('Finished', task_name='Detect Circle'))
     return (hist_file, json_file, result)
+
+def process_histogram(hist):
+    """
+    """
+
+# detect_one_circle()
