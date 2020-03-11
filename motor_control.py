@@ -1,8 +1,11 @@
 import time
-import maestro
-from smbus2 import SMBus
-from linear import TicI2C
 from typing import List
+
+from smbus2 import SMBus
+
+import maestro
+from linear import TicI2C
+
 
 def move_water_linear(positions: List[int]):
     """

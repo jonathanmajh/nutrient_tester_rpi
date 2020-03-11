@@ -1,9 +1,11 @@
+import traceback
+from configparser import ConfigParser
 from dataclasses import dataclass
 from queue import Queue
-from configparser import ConfigParser
-import traceback
+
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+
 
 @dataclass
 class QueueMessage:
@@ -32,17 +34,20 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
         elif data.message_type == 3:
             status = status + 'Error: ' + data.task_name + ': ' + data.message + '\n'
         elif data.message_type == 4:
-            status = status + 'Error: Test Failed: ' + data.task_name + '\n' + str(data.exception[0]) + '\n' + str(data.exception[1]) + '\n' + traceback.format_tb(data.exception[2])[0]
+            status = status + 'Error: Test Failed: ' + data.task_name + '\n' + \
+                str(data.exception[0]) + '\n' + str(data.exception[1]
+                                                    ) + '\n' + traceback.format_tb(data.exception[2])[0]
             running = False
         elif data.message_type == 0:
-            status = status + 'Test from unit: ' + TESTER + ' has completed successfully, see results attached'
+            status = status + 'Test from unit: ' + TESTER + \
+                ' has completed successfully, see results attached'
             running = False
         print(data.task_name + ': ' + data.message)
         queue.task_done()
     message = Mail(
         from_email=TESTER+'@example.com',
         to_emails=EMAIL,
-        subject='Test Results for Tester: '+ TESTER + ' at time: x',
+        subject='Test Results for Tester: ' + TESTER + ' at time: x',
         html_content='<p>' + status + '<p>')
     try:
         sg = SendGridAPIClient(API)
@@ -73,7 +78,7 @@ def write_new_config_file():
     exit()
 
 
-#def set_wake_time(wake_time):
+# def set_wake_time(wake_time):
 #    """
 #    set cron schedule? probably easier to do manually since sudo is required
 #    """

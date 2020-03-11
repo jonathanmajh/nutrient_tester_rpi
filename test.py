@@ -1,38 +1,35 @@
-import sys
 import os
+import sys
 import time
-from datetime import datetime
-from queue import Queue
 from math import sqrt
-from picamera import PiCamera
+from queue import Queue
 from threading import Thread
 
-import cv2
-import numpy as np
-import matplotlib
-from matplotlib import pyplot as plt
-from motor_control import move_water_linear, move_water_valve, move_reactant_linear
-from image_processing import detect_circle
 import maestro
-
+from image_processing import detect_circle
 from misc import QueueMessage
-matplotlib.use('TkAgg')
+from motor_control import (move_reactant_linear, move_water_linear,
+                           move_water_valve)
+from picamera import PiCamera
 
-def test_main(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
+
+def test_main(queue: Queue, completed: int, test_time: str):
     try:
         queue.put(QueueMessage('Starting', task_name='Test Main'))
         timer = time.time()
         pre_test_clean(queue)
         just_add_water(queue, completed)
-        tube cleaning can run async at while we are waiting for heater
+        # tube cleaning can run async at while we are waiting for heater
         clean = Thread(target=post_test_clean, args=(queue, ))
         clean.start()
         run_heater(queue)
-        location = movement_feedback(queue, completed, test_time:, FORMAT:):
+        location = movement_feedback(queue, completed, test_time)
         result = detect_color(queue, filename, location)
+        # TODO add files to be sent, analysis
         # it doesnt really matter when cleaning finishes as long as it does by the end
         clean.join()
-        queue.put(QueueMessage('Finished in: ' + str(time.time() - timer), task_name='Test Main'))
+        queue.put(QueueMessage('Finished in: ' +
+                               str(time.time() - timer), task_name='Test Main'))
     except:
         queue.put(QueueMessage('Unexpected Exception', 4, sys.exc_info()))
 
@@ -47,40 +44,43 @@ def pre_test_clean(queue: Queue):
     queue.put(QueueMessage('Sucking in Air', task_name='Pre-Test Cleaning'))
     move_water_valve(1)
     move_water_linear([0])
-    queue.put(QueueMessage('Pushing out air, then pulling in water', task_name='Pre-Test Cleaning'))
+    queue.put(QueueMessage('Pushing out air, then pulling in water',
+                           task_name='Pre-Test Cleaning'))
     move_water_valve(2)
     # push out air, pull in water
     move_water_linear([5000, 1000])
     queue.put(QueueMessage('Finished', task_name='Pre-Test Cleaning'))
 
 
-
-def move_paper(queue: Queue, completed: int, jog: bool=False):
+def move_paper(queue: Queue, completed: int, jog: bool = False):
     """
     Moves new paper into position
     Need to somehow track roll usage
     """
     queue.put(QueueMessage('Starting', task_name='Move Paper'))
-    speed = 2 # rad / second
-    length = 20 # mm
+    speed = 2  # rad / second
+    length = 20  # mm
     total_length = 20 * completed
-    inner_radius = 123 #TODO
-    thickness = 0.05 # used paper thickness.... TODO
-    radius = sqrt(total_length * thickness / 3.14159 + inner_radius * inner_radius)
+    inner_radius = 123  # TODO
+    thickness = 0.05  # used paper thickness.... TODO
+    radius = sqrt(total_length * thickness / 3.14159 +
+                  inner_radius * inner_radius)
     # https://math.stackexchange.com/questions/2145821/calculating-the-length-of-tape-when-it-is-wound-up
     theta = length / radius
     run_time = theta / speed
     if (jog):
         queue.put(QueueMessage('Jog mode', task_name='Move Paper'))
         run_time = run_time / 10
-    queue.put(QueueMessage('Turning Servo by {rad} rad, time required {time} s'.format(rad=theta, time=run_time), task_name='Move Paper'))
+    queue.put(QueueMessage('Turning Servo by {rad} rad, time required {time} s'.format(
+        rad=theta, time=run_time), task_name='Move Paper'))
     servo = maestro.Controller()
     servo.setAccel(0, 4)
     servo.setSpeed(0, 10)
-    servo.setTarget(0, 6000) # turn continuous servo
+    servo.setTarget(0, 6000)  # turn continuous servo
     time.sleep(run_time)
-    servo.setTarget(0, 1500) # stop servo
+    servo.setTarget(0, 1500)  # stop servo
     queue.put(QueueMessage('Finished', task_name='Move Paper'))
+
 
 def just_add_water(queue: Queue, completed: int):
     """
@@ -97,16 +97,19 @@ def just_add_water(queue: Queue, completed: int):
     move_reactant_linear(completed)
     queue.put(QueueMessage('Finished', task_name='Sampling'))
 
+
 def run_heater(queue: Queue):
     """
     """
     queue.put(QueueMessage('Starting', task_name='Heater'))
-    queue.put(QueueMessage('Turning on heater for {time} seconds'.format(time=300), task_name='Heater'))
+    queue.put(QueueMessage('Turning on heater for {time} seconds'.format(
+        time=300), task_name='Heater'))
     # TODO set pin to high
-    time.sleep(300) # 5 minutes
+    time.sleep(300)  # 5 minutes
     queue.put(QueueMessage('Finished', task_name='Heater'))
 
-def take_photo(queue: Queue, test_time: datetime, FORMAT: str):
+
+def take_photo(queue: Queue, test_time: str):
     """
     """
     queue.put(QueueMessage('Starting', task_name='Camera'))
@@ -114,12 +117,14 @@ def take_photo(queue: Queue, test_time: datetime, FORMAT: str):
     # TODO
     camera = PiCamera()
     queue.put(QueueMessage('Taking photo', task_name='Camera'))
-    filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time.strftime(FORMAT))
+    filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time)
     camera.capture(filename)
-    queue.put(QueueMessage('Photo saved as "{}"'.format(filename), task_name='Camera'))
+    queue.put(QueueMessage('Photo saved as "{}"'.format(
+        filename), task_name='Camera'))
     camera.close()
     queue.put(QueueMessage('Finished', task_name='Camera'))
     return filename
+
 
 def post_test_clean(queue: Queue):
     """
@@ -140,25 +145,27 @@ def post_test_clean(queue: Queue):
     move_water_linear([5000])
     queue.put(QueueMessage('Finished', task_name='Post-test Clean'))
 
-def movement_feedback(queue: Queue, completed: int, test_time: datetime, FORMAT: str):
+
+def movement_feedback(queue: Queue, completed: int, test_time: str):
     """
     Ensures the postition of the paper is correct for the next test
     """
-    # TODO combine test_time and format to just one string
     queue.put(QueueMessage('Starting', task_name='Movement Feedback'))
     x = 960
     i = 0
-    queue.put(QueueMessage('Initial Paper movement', task_name='Movement Feedback'))
+    queue.put(QueueMessage('Initial Paper movement',
+                           task_name='Movement Feedback'))
     move_paper(queue, completed)
-    filename = take_photo(queue, test_time, FORMAT)
+    filename = take_photo(queue, test_time)
     location = detect_circle(queue, filename)
     incorrect = abs(location[0] - x) < 100
     while(incorrect):
         i = i + 1
-        queue.put(QueueMessage('Paper Jog: {}'.format(i), task_name='Movement Feedback'))
+        queue.put(QueueMessage('Paper Jog: {}'.format(
+            i), task_name='Movement Feedback'))
         os.remove('filename')
         move_paper(queue, completed, True)
-        filename = take_photo(queue, test_time, FORMAT)
+        filename = take_photo(queue, test_time)
         location = detect_circle(queue, filename)
         incorrect = abs(location[0] - x) < 100
     queue.put(QueueMessage('Finished', task_name='Movement Feedback'))

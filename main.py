@@ -4,11 +4,12 @@
 # get results from test and send email
 
 from configparser import ConfigParser
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, timedelta
-from threading import Thread
 from queue import Queue
 from test import test_main
+from threading import Thread
+
 from misc import email_thread, write_new_config_file
 
 
@@ -34,7 +35,7 @@ def main():
                 quit()
             # default behavior is to RUN tests
             queue = Queue()
-            test_thread = Thread(target=test_main, args=(queue, Completed, test_time, DATETIME_FORMAT))
+            test_thread = Thread(target=test_main, args=(queue, Completed, test_time.strftime(DATETIME_FORMAT)))
             monitor = Thread(target=email_thread, args=(
                 queue, SENDGRID_API, TESTER_ID, EMAIL_ADDRESS))
             print('starting queue')

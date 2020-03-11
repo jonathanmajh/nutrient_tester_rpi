@@ -1,7 +1,6 @@
 from datetime import datetime
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-import subprocess
 
 API = 'fml'
 EMAIL = 'jonathanmajh@gmail.com'
