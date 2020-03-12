@@ -32,11 +32,11 @@ def detect_lines():
 
 
 def detect_all_circle():
-    img = cv.imread('samples/white.jpg')
+    img = cv.imread('samples/focus.jpg')
     img = cv.medianBlur(img, 5)
     cimg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     circles = cv.HoughCircles(cimg, cv.HOUGH_GRADIENT, 1, minDist=20,
-                              param1=50, param2=30, minRadius=80, maxRadius=100)
+                              param1=50, param2=30, minRadius=0, maxRadius=100)
     # it is important to get the right min (80) / max radius (100)
     # though minDist btw circles is important too
     circles = np.uint16(np.around(circles))
@@ -54,7 +54,7 @@ def detect_all_circle():
 
 def detect_one_circle():
     # also masked area outside circle
-    img = cv.imread('samples/123.jpg')
+    img = cv.imread('samples/focus.jpg')
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     img = cv.medianBlur(img, 5)
     cimg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -168,4 +168,4 @@ def process_histogram(hist):
     """
     """
 
-# detect_one_circle()
+detect_all_circle()

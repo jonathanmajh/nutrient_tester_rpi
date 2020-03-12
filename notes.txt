@@ -43,3 +43,6 @@ http://aleto.ch/color-mixer/
 red - 0-10 + 170-180
 blue - 110-130
 https://i.stack.imgur.com/gyuw4.png
+
+
+led on pin 23 (8th from top, outer column)

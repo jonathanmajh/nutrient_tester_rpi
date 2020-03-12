@@ -11,7 +11,7 @@ from misc import QueueMessage
 from motor_control import (move_reactant_linear, move_water_linear,
                            move_water_valve)
 from picamera import PiCamera
-
+import RPi.GPIO as GPIO
 
 def test_main(queue: Queue, completed: int, test_time: str):
     try:
@@ -114,7 +114,10 @@ def take_photo(queue: Queue, test_time: str):
     """
     queue.put(QueueMessage('Starting', task_name='Camera'))
     queue.put(QueueMessage('Turning on LEDs', task_name='Camera'))
-    # TODO
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(23,GPIO.OUT)
+    GPIO.output(23,GPIO.HIGH)
     camera = PiCamera()
     queue.put(QueueMessage('Taking photo', task_name='Camera'))
     filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time)
@@ -122,6 +125,7 @@ def take_photo(queue: Queue, test_time: str):
     queue.put(QueueMessage('Photo saved as "{}"'.format(
         filename), task_name='Camera'))
     camera.close()
+    GPIO.output(23,GPIO.LOW)
     queue.put(QueueMessage('Finished', task_name='Camera'))
     return filename
 
