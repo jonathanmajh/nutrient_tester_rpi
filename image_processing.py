@@ -34,15 +34,15 @@ def detect_lines():
 def detect_all_circle():
     img = cv.imread('samples/focus.jpg')
     img = cv.medianBlur(img, 5)
-    cimg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    circles = cv.HoughCircles(cimg, cv.HOUGH_GRADIENT, 1, minDist=20,
-                              param1=50, param2=30, minRadius=0, maxRadius=100)
+    cimg = cv.cvtCol or(img, cv.COLOR_BGR2GRAY)
+    circles = cv.HoughCircles(cimg, cv.HOUGH_GRADIENT, 1, minDist=50,
+                              param1=50, param2=30, minRadius=100, maxRadius=200)
     # it is important to get the right min (80) / max radius (100)
     # though minDist btw circles is important too
     circles = np.uint16(np.around(circles))
     for i in circles[0, :]:
         # draw the outer circle
-        cv.circle(cimg, (i[0], i[1]), i[2], (0, 255, 0), 2)
+        cv.circle(cimg, (i[0], i[1]), i[2], (0, 255, 0), 2) 
         # draw the center of the circle
         cv.circle(cimg, (i[0], i[1]), 2, (0, 0, 255), 3)
     cv.namedWindow('circles', cv.WINDOW_NORMAL)
@@ -58,8 +58,8 @@ def detect_one_circle():
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     img = cv.medianBlur(img, 5)
     cimg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    circles = cv.HoughCircles(cimg, cv.HOUGH_GRADIENT, 1, 20,
-                              param1=50, param2=30, minRadius=0, maxRadius=0)
+    circles = cv.HoughCircles(cimg, cv.HOUGH_GRADIENT, 1, 50,
+                              param1=50, param2=30, minRadius=100, maxRadius=200)
     circles = np.uint16(np.around(circles))
 
     # multiple circles were detected but we only want the first circle
@@ -168,4 +168,4 @@ def process_histogram(hist):
     """
     """
 
-detect_all_circle()
+detect_one_circle()
