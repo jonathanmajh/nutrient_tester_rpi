@@ -58,11 +58,11 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     Need to somehow track roll usage
     """
     queue.put(QueueMessage('Starting', task_name='Move Paper'))
-    speed = 2  # rad / second
+    speed = 6.28318530718  # rad / second
     length = 20  # mm
     total_length = 20 * completed
-    inner_radius = 123  # TODO
-    thickness = 0.05  # used paper thickness.... TODO
+    inner_radius = 11.5  # of the spool
+    thickness = 0.1  # used paper thickness
     radius = sqrt(total_length * thickness / 3.14159 +
                   inner_radius * inner_radius)
     # https://math.stackexchange.com/questions/2145821/calculating-the-length-of-tape-when-it-is-wound-up
@@ -70,7 +70,7 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     run_time = theta / speed
     if (jog):
         queue.put(QueueMessage('Jog mode', task_name='Move Paper'))
-        run_time = run_time / 10
+        run_time = run_time / 20
     queue.put(QueueMessage('Turning Servo by {rad} rad, time required {time} s'.format(
         rad=theta, time=run_time), task_name='Move Paper'))
     servo = maestro.Controller()
