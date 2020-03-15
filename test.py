@@ -17,17 +17,17 @@ def test_main(queue: Queue, completed: int, test_time: str):
     try:
         queue.put(QueueMessage('Starting', task_name='Test Main'))
         timer = time.time()
-        pre_test_clean(queue)
-        just_add_water(queue, completed)
+        # pre_test_clean(queue)
+        # just_add_water(queue, completed)
         # tube cleaning can run async at while we are waiting for heater
-        clean = Thread(target=post_test_clean, args=(queue, ))
-        clean.start()
-        run_heater(queue)
+        # clean = Thread(target=post_test_clean, args=(queue, ))
+        # clean.start()
+        # run_heater(queue)
         location = movement_feedback(queue, completed, test_time)
         result = detect_color(queue, filename, location)
         # TODO add files to be sent, analysis
         # it doesnt really matter when cleaning finishes as long as it does by the end
-        clean.join()
+        # clean.join()
         queue.put(QueueMessage('Finished in: ' +
                                str(time.time() - timer), task_name='Test Main'))
     except:
