@@ -48,6 +48,7 @@ def move_water_valve(position):
     1. Outlet, Syringe
     2. Inlet, Syringe
     """
+    # valid position from 3000 - 10000
     if position == 1:
         target = 2000
     elif position == 2:
