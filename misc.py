@@ -44,6 +44,7 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
             running = False
         print(data.task_name + ': ' + data.message)
         queue.task_done()
+    print('sending email')
     message = Mail(
         from_email=TESTER+'@example.com',
         to_emails=EMAIL,
@@ -58,6 +59,7 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
     except Exception as e:
         print(str(type(e)) + ' ' + str(e))
     # code for sending email
+    print('finished sending email')
     print(status)
 
 
