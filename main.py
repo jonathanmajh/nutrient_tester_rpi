@@ -43,6 +43,7 @@ def main():
             monitor.start()
             print('waiting for queue to finish')
             test_thread.join()
+            print('test thread finished')
             monitor.join()
             print('queue finished')
             # update config file with new run time
