@@ -152,10 +152,10 @@ def detect_color(queue: Queue, filename: str, location: List[int]):
         plt.xlim([0, 256])
         result[hsv_var[i]] = hist.tolist()
     queue.put(QueueMessage('Saving Files', task_name='Detect Circle'))
-    hist_file = '{}_hist.png'.format(filename[:-3])
+    hist_file = '{}_hist.png'.format(filename[:-4])
     plt.savefig(hist_file, bbox_inches='tight')
 
-    json_file = '{}_hist.json'.format(filename[:-3])
+    json_file = '{}_hist.json'.format(filename[:-4])
     with open(json_file, 'w') as jf:
         json.dump(result, jf, indent=4)
     queue.put(QueueMessage('Finished', task_name='Detect Circle'))
