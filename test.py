@@ -179,6 +179,6 @@ def movement_feedback(queue: Queue, completed: int, test_time: str):
         move_paper(queue, completed, True)
         filename = take_photo(queue, test_time)
         location = detect_circle(queue, filename)
-        incorrect = abs(location[0] - x) < 20
+        incorrect = abs(location[0] - x) > 20
     queue.put(QueueMessage('Finished', task_name='Movement Feedback'))
     return location
