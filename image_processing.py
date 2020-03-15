@@ -9,9 +9,6 @@ from matplotlib import pyplot as plt
 
 from misc import QueueMessage
 
-matplotlib.use('TkAgg')
-
-
 def detect_lines():
     # load photo
     image = cv.imread('samples/white.jpg')
@@ -167,5 +164,3 @@ def detect_color(queue: Queue, filename: str, location: List[int]):
 def process_histogram(hist):
     """
     """
-
-detect_one_circle()
