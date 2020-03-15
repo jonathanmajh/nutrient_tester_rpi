@@ -23,6 +23,7 @@ def test_main(queue: Queue, completed: int, test_time: str):
         # clean = Thread(target=post_test_clean, args=(queue, ))
         # clean.start()
         # run_heater(queue)
+        filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time)
         location = movement_feedback(queue, completed, test_time)
         result = detect_color(queue, filename, location)
         # TODO add files to be sent, analysis
@@ -162,7 +163,7 @@ def movement_feedback(queue: Queue, completed: int, test_time: str):
     Ensures the postition of the paper is correct for the next test
     """
     queue.put(QueueMessage('Starting', task_name='Movement Feedback'))
-    x = 960
+    x = 340
     i = 0
     queue.put(QueueMessage('Initial Paper movement',
                            task_name='Movement Feedback'))
@@ -178,6 +179,6 @@ def movement_feedback(queue: Queue, completed: int, test_time: str):
         move_paper(queue, completed, True)
         filename = take_photo(queue, test_time)
         location = detect_circle(queue, filename)
-        incorrect = abs(location[0] - x) < 100
+        incorrect = abs(location[0] - x) < 20
     queue.put(QueueMessage('Finished', task_name='Movement Feedback'))
     return location
