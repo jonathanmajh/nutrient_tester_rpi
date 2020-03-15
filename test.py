@@ -117,7 +117,11 @@ def take_photo(queue: Queue, test_time: str):
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(23,GPIO.OUT)
+    GPIO.setup(24,GPIO.OUT)
+    GPIO.setup(25,GPIO.OUT)
     GPIO.output(23,GPIO.HIGH)
+    GPIO.output(24,GPIO.HIGH)
+    GPIO.output(25,GPIO.HIGH)
     camera = PiCamera()
     queue.put(QueueMessage('Taking photo', task_name='Camera'))
     filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time)
@@ -126,6 +130,8 @@ def take_photo(queue: Queue, test_time: str):
         filename), task_name='Camera'))
     camera.close()
     GPIO.output(23,GPIO.LOW)
+    GPIO.output(24,GPIO.LOW)
+    GPIO.output(25,GPIO.LOW)
     queue.put(QueueMessage('Finished', task_name='Camera'))
     return filename
 
