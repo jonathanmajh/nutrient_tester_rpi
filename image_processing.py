@@ -148,9 +148,9 @@ def detect_color(queue: Queue, filename: str, location: List[int]):
     hsv_var = ['h', 's', 'v']
     for i, col in enumerate(plot_color):
         hist = cv.calcHist([hsv], [i], mask, [256], [0, 256])
-        result[hsv_var[i]] = hist
         plt.plot(hist, color=col)
         plt.xlim([0, 256])
+        result[hsv_var[i]] = hist.tolist()
     queue.put(QueueMessage('Saving Files', task_name='Detect Circle'))
     hist_file = '{}_hist.png'.format(filename[:-3])
     plt.savefig(hist_file, bbox_inches='tight')

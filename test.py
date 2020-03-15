@@ -175,7 +175,7 @@ def movement_feedback(queue: Queue, completed: int, test_time: str):
         i = i + 1
         queue.put(QueueMessage('Paper Jog: {}'.format(
             i), task_name='Movement Feedback'))
-        os.remove('filename')
+        os.remove(filename)
         move_paper(queue, completed, True)
         filename = take_photo(queue, test_time)
         location = detect_circle(queue, filename)
