@@ -6,7 +6,7 @@ from queue import Queue
 from threading import Thread
 
 import maestro
-from image_processing import detect_circle
+from image_processing import detect_circle, detect_color
 from misc import QueueMessage
 from motor_control import (move_reactant_linear, move_water_linear,
                            move_water_valve)
