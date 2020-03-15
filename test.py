@@ -17,17 +17,17 @@ def test_main(queue: Queue, completed: int, test_time: str):
     try:
         queue.put(QueueMessage('Starting', task_name='Test Main'))
         timer = time.time()
-        pre_test_clean(queue)
-        just_add_water(queue, completed)
+        # pre_test_clean(queue)
+        # just_add_water(queue, completed)
         # tube cleaning can run async at while we are waiting for heater
-        clean = Thread(target=post_test_clean, args=(queue, ))
-        clean.start()
-        run_heater(queue)
+        # clean = Thread(target=post_test_clean, args=(queue, ))
+        # clean.start()
+        # run_heater(queue)
         location = movement_feedback(queue, completed, test_time)
         result = detect_color(queue, filename, location)
         # TODO add files to be sent, analysis
         # it doesnt really matter when cleaning finishes as long as it does by the end
-        clean.join()
+        # clean.join()
         queue.put(QueueMessage('Finished in: ' +
                                str(time.time() - timer), task_name='Test Main'))
     except:
@@ -58,16 +58,16 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     Need to somehow track roll usage
     """
     queue.put(QueueMessage('Starting', task_name='Move Paper'))
-    speed = 2  # rad / second
+    speed = 6.80318530718  # rad / second
     length = 20  # mm
     total_length = 20 * completed
-    inner_radius = 123  # TODO
-    thickness = 0.05  # used paper thickness.... TODO
+    inner_radius = 11.5  # of the spool
+    thickness = 0.1  # used paper thickness
     radius = sqrt(total_length * thickness / 3.14159 +
                   inner_radius * inner_radius)
     # https://math.stackexchange.com/questions/2145821/calculating-the-length-of-tape-when-it-is-wound-up
     theta = length / radius
-    run_time = theta / speed
+    run_time = theta / speed / 2
     if (jog):
         queue.put(QueueMessage('Jog mode', task_name='Move Paper'))
         run_time = run_time / 10
