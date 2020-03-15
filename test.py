@@ -71,7 +71,7 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     run_time = theta / speed / 2
     if (jog):
         queue.put(QueueMessage('Jog mode', task_name='Move Paper'))
-        run_time = run_time / 10
+        run_time = run_time / 50
     queue.put(QueueMessage('Turning Servo by {rad} rad, time required {time} s'.format(
         rad=theta, time=run_time), task_name='Move Paper'))
     servo = maestro.Controller()
