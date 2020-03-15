@@ -58,7 +58,7 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     Need to somehow track roll usage
     """
     queue.put(QueueMessage('Starting', task_name='Move Paper'))
-    speed = 6.80318530718  # rad / second
+    speed = 6.28318530718 / 5  # rad / second
     length = 20  # mm
     total_length = 20 * completed
     inner_radius = 11.5  # of the spool
@@ -74,11 +74,11 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     queue.put(QueueMessage('Turning Servo by {rad} rad, time required {time} s'.format(
         rad=theta, time=run_time), task_name='Move Paper'))
     servo = maestro.Controller()
-    servo.setAccel(0, 4)
-    servo.setSpeed(0, 10)
-    servo.setTarget(0, 6000)  # turn continuous servo
+    #servo.setAccel(0, 4)
+    #servo.setSpeed(0, 10)
+    servo.setTarget(4, 5675)  # turn continuous servo
     time.sleep(run_time)
-    servo.setTarget(0, 1500)  # stop servo
+    servo.setTarget(4, 0)  # stop servo
     queue.put(QueueMessage('Finished', task_name='Move Paper'))
 
 
