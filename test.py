@@ -58,7 +58,7 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     Need to somehow track roll usage
     """
     queue.put(QueueMessage('Starting', task_name='Move Paper'))
-    speed = 6.28318530718  # rad / second
+    speed = 6.80318530718  # rad / second
     length = 20  # mm
     total_length = 20 * completed
     inner_radius = 11.5  # of the spool
