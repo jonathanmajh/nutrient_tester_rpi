@@ -122,6 +122,7 @@ def take_photo(queue: Queue, test_time: str):
     GPIO.output(23,GPIO.HIGH)
     GPIO.output(24,GPIO.HIGH)
     GPIO.output(25,GPIO.HIGH)
+    time.sleep(1)
     camera = PiCamera()
     queue.put(QueueMessage('Taking photo', task_name='Camera'))
     filename = '/home/pi/nutrient_tester_rpi/{}.jpg'.format(test_time)
