@@ -76,7 +76,7 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
     servo = maestro.Controller()
     #servo.setAccel(0, 4)
     #servo.setSpeed(0, 10)
-    servo.setTarget(4, 5675)  # turn continuous servo
+    servo.setTarget(4, 5690)  # turn continuous servo
     time.sleep(run_time)
     servo.setTarget(4, 0)  # stop servo
     queue.put(QueueMessage('Finished', task_name='Move Paper'))
