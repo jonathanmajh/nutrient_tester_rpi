@@ -55,5 +55,5 @@ def move_water_valve(position):
     elif position == 2:
         target = 10000
     servo = maestro.Controller()
-    servo.setTarget(4, target) # turn continuous servo
+    servo.setTarget(5, target) # turn continuous servo
     time.sleep(2)
