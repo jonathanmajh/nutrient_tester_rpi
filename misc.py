@@ -1,10 +1,13 @@
+import os
+import base64
 import traceback
 from configparser import ConfigParser
 from dataclasses import dataclass
 from queue import Queue
+from zipfile import ZipFile
 
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import (Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId)
 
 
 @dataclass
@@ -20,6 +23,7 @@ class QueueMessage:
     message_type: int = 1
     exception: tuple = None
     task_name: str = ''
+    file_name: str = ''
 
 
 def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
@@ -45,11 +49,28 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
         print(data.task_name + ': ' + data.message)
         queue.task_done()
     print('sending email')
+    zip_file = '{}.zip'.format(data.file_name)
+    with ZipFile(zip_file, 'w') as zip:
+        zip.write('{}.jpg'.format(date.file_name))
+        zip.write('{}_hist.png'.format(date.file_name))
+        zip.write('{}_hist.json'.format(date.file_name))
+
     message = Mail(
         from_email=TESTER+'@example.com',
         to_emails=EMAIL,
         subject='Test Results for Tester: ' + TESTER + ' at time: x',
         html_content='<p>' + status + '<p>')
+    with open(zip_file, 'rb') as f:
+        data = f.read()
+        f.close()
+    encoded = base64.b64encode(data).decode()
+    attachment = Attachment()
+    attachment.file_content = FileContent(encoded)
+    attachment.file_type = FileType('application/zip')
+    attachment.file_name = FileName(data.file_name)
+    attachment.disposition = Disposition('attachment')
+    attachment.content_id = ContentId('Test Results')
+    message.attachment = attachment
     try:
         sg = SendGridAPIClient(API)
         response = sg.send(message)
