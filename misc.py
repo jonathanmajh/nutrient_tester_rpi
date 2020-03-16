@@ -68,7 +68,7 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
     attachment = Attachment()
     attachment.file_content = FileContent(encoded)
     attachment.file_type = FileType('application/zip')
-    attachment.file_name = FileName(file_name)
+    attachment.file_name = FileName('{}.zip'.format(file_name))
     attachment.disposition = Disposition('attachment')
     attachment.content_id = ContentId('Test Results')
     message.attachment = attachment
