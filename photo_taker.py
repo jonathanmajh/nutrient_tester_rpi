@@ -1,5 +1,6 @@
 from picamera import PiCamera
 import RPi.GPIO as GPIO
+import time
 
 filename = input('Concentration-Test Number: ')
 GPIO.setmode(GPIO.BCM)
