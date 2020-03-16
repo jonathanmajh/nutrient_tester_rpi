@@ -49,7 +49,7 @@ def pre_test_clean(queue: Queue):
                            task_name='Pre-Test Cleaning'))
     move_water_valve(2)
     # push out air, pull in water
-    move_water_linear([5000, 1000])
+    move_water_linear([4000, 1000])
     queue.put(QueueMessage('Finished', task_name='Pre-Test Cleaning'))
 
 
@@ -147,14 +147,14 @@ def post_test_clean(queue: Queue):
     queue.put(QueueMessage('Push out water', task_name='Post-test Clean'))
     move_water_valve(2)
     # push water out
-    move_water_linear([5000])
+    move_water_linear([4000])
     # take in more air
     queue.put(QueueMessage('Pulling in air', task_name='Post-test Clean'))
     move_water_valve(1)
     move_water_linear([0])
     queue.put(QueueMessage('Push out air', task_name='Post-test Clean'))
     move_water_valve(2)
-    move_water_linear([5000])
+    move_water_linear([4000])
     queue.put(QueueMessage('Finished', task_name='Post-test Clean'))
 
 

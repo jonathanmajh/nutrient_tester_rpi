@@ -46,14 +46,15 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
             status = status + 'Test from unit: ' + TESTER + \
                 ' has completed successfully, see results attached'
             running = False
+            file_name = data.file_name
         print(data.task_name + ': ' + data.message)
         queue.task_done()
     print('sending email')
-    zip_file = '{}.zip'.format(data.file_name)
+    zip_file = '{}.zip'.format(file_name)
     with ZipFile(zip_file, 'w') as zip:
-        zip.write('{}.jpg'.format(data.file_name))
-        zip.write('{}_hist.png'.format(data.file_name))
-        zip.write('{}_hist.json'.format(data.file_name))
+        zip.write('{}.jpg'.format(file_name))
+        zip.write('{}_hist.png'.format(file_name))
+        zip.write('{}_hist.json'.format(file_name))
 
     message = Mail(
         from_email=TESTER+'@example.com',
@@ -67,7 +68,7 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
     attachment = Attachment()
     attachment.file_content = FileContent(encoded)
     attachment.file_type = FileType('application/zip')
-    attachment.file_name = FileName(data.file_name)
+    attachment.file_name = FileName(file_name)
     attachment.disposition = Disposition('attachment')
     attachment.content_id = ContentId('Test Results')
     message.attachment = attachment
