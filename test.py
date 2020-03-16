@@ -30,7 +30,7 @@ def test_main(queue: Queue, completed: int, test_time: str):
         # it doesnt really matter when cleaning finishes as long as it does by the end
         # clean.join()
         queue.put(QueueMessage('Finished in: ' +
-                               str(time.time() - timer), task_name='Test Main'))
+                               str(time.time() - timer), task_name='Test Main', message_type=0))
     except:
         queue.put(QueueMessage('Unexpected Exception', 4, sys.exc_info()))
 
