@@ -151,7 +151,7 @@ def post_test_clean(queue: Queue):
     # take in more air
     queue.put(QueueMessage('Pulling in air', task_name='Post-test Clean'))
     move_water_valve(1)
-    move_water_linear(0)
+    move_water_linear([0])
     queue.put(QueueMessage('Push out air', task_name='Post-test Clean'))
     move_water_valve(2)
     move_water_linear([5000])
