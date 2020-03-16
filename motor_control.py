@@ -12,9 +12,9 @@ def move_water_linear(positions: List[int]):
     positions is an array of positions for the linear acturator to move to
     position is 0 to -4000 (extended)
     """
-    tic = TicI2C(SMBus(1), 14)
+    tic = TicI2C(SMBus(1), 15)
     position = tic.get_current_position()
-    print("Tic (14) Current position is {}.".format(position))
+    print("Tic (15) Current position is {}.".format(position))
 
     tic.exit_safe_start()
     tic.energize()
@@ -30,9 +30,9 @@ def move_reactant_linear(completed: int):
     position is 0 to -4000 (extended)
     Each test need to move 13 (0.15 mm)
     """
-    tic = TicI2C(SMBus(1), 15)
+    tic = TicI2C(SMBus(1), 14)
     position = tic.get_current_position()
-    print("Tic (15) Current position is {}.".format(position))
+    print("Tic (14) Current position is {}.".format(position))
 
     tic.exit_safe_start()
     tic.energize()
