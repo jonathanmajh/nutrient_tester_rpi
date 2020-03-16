@@ -12,7 +12,7 @@ def move_water_linear(positions: List[int]):
     positions is an array of positions for the linear acturator to move to
     position is 0 to -4000 (extended)
     """
-    tic = TicI2C(SMBus(1), 15)
+    tic = TicI2C(SMBus(1), 14)
     position = tic.get_current_position()
     print("Tic (15) Current position is {}.".format(position))
 
