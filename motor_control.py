@@ -10,7 +10,7 @@ from linear import TicI2C
 def move_water_linear(positions: List[int]):
     """
     positions is an array of positions for the linear acturator to move to
-    position is 0 - 5000 (extended)
+    position is 0 to -4000 (extended)
     """
     tic = TicI2C(SMBus(1), 14)
     position = tic.get_current_position()
@@ -27,7 +27,8 @@ def move_water_linear(positions: List[int]):
 def move_reactant_linear(completed: int):
     """
     based moves actuator based on how many tests have been completed
-    position is 0 - 5000 (extended)
+    position is 0 to -4000 (extended)
+    Each test need to move 13 (0.15 mm)
     """
     tic = TicI2C(SMBus(1), 15)
     position = tic.get_current_position()
@@ -35,7 +36,7 @@ def move_reactant_linear(completed: int):
 
     tic.exit_safe_start()
     tic.energize()
-    tic.set_target_position(completed * 20) # TODO displacement for each test
+    tic.set_target_position(int(-1*completed * 13.3333333)) # TODO displacement for each test
     time.sleep(1)
     # should syringe be pulled back a bit after outputing an amount of reactant?
     tic.de_energize()
@@ -50,11 +51,9 @@ def move_water_valve(position):
     """
     # valid position from 3000 - 10000
     if position == 1:
-        target = 2000
+        target = 3000
     elif position == 2:
-        target = 1000
+        target = 10000
     servo = maestro.Controller()
-    servo.setAccel(1, 4)
-    servo.setSpeed(1, 10)
-    servo.setTarget(1, target) # turn continuous servo
-    time.sleep(1)
+    servo.setTarget(4, target) # turn continuous servo
+    time.sleep(2)
