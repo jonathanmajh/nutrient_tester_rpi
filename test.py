@@ -68,7 +68,7 @@ def move_paper(queue: Queue, completed: int, jog: bool = False):
                   inner_radius * inner_radius)
     # https://math.stackexchange.com/questions/2145821/calculating-the-length-of-tape-when-it-is-wound-up
     theta = length / radius
-    run_time = theta / speed / 2
+    run_time = theta / speed / 4
     if (jog):
         queue.put(QueueMessage('Jog mode', task_name='Move Paper'))
         run_time = run_time / 50
