@@ -51,9 +51,9 @@ def email_thread(queue: Queue, API: str, TESTER: str, EMAIL: str):
     print('sending email')
     zip_file = '{}.zip'.format(data.file_name)
     with ZipFile(zip_file, 'w') as zip:
-        zip.write('{}.jpg'.format(date.file_name))
-        zip.write('{}_hist.png'.format(date.file_name))
-        zip.write('{}_hist.json'.format(date.file_name))
+        zip.write('{}.jpg'.format(data.file_name))
+        zip.write('{}_hist.png'.format(data.file_name))
+        zip.write('{}_hist.json'.format(data.file_name))
 
     message = Mail(
         from_email=TESTER+'@example.com',
