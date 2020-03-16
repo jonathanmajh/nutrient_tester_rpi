@@ -103,10 +103,10 @@ def run_heater(queue: Queue):
     """
     """
     queue.put(QueueMessage('Starting', task_name='Heater'))
-    queue.put(QueueMessage('Turning on heater for {time} seconds'.format(
-        time=300), task_name='Heater'))
-    # TODO set pin to high
-    time.sleep(300)  # 5 minutes
+    # queue.put(QueueMessage('Turning on heater for {time} seconds'.format(
+    #     time=300), task_name='Heater'))
+    # # TODO set pin to high
+    # time.sleep(300)  # 5 minutes
     queue.put(QueueMessage('Finished', task_name='Heater'))
 
 
